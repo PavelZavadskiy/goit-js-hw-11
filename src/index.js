@@ -144,7 +144,18 @@ document.addEventListener('scroll', event => {
   const screenHeight = window.innerHeight;
   const scrolled = window.scrollY;
 
-  debug.textContent = `height=${height}, screenHeight=${screenHeight}, scrolled=${scrolled}`;
+  if (height - screenHeight - scrolled < 100) {
+    if (max_pages > page) {
+      page++;
+      getImages()
+        .then(responce => render(responce.data))
+        .catch(error => Notiflix.Notify.failure(`Something went wrong: ${error.code} ${error.message}`));
+    } else {
+      Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+    }
+  }
+
+  debug.textContent = `height=${height}, screenHeight=${screenHeight}, scrolled=${scrolled}, scrollTop=${document.documentElement.scrollTop}`;
 
   if (document.documentElement.clientHeight < document.documentElement.scrollTop) {
     scrollUp.hidden = false;
