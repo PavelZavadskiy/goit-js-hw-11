@@ -11,6 +11,7 @@ const form = document.querySelector('#search-form');
 const searchQuery = document.querySelector('[name="searchQuery"]');
 const scrollUp = document.querySelector('.scroll-up');
 scrollUp.hidden = true;
+const debug = document.querySelector('.debug');
 
 const COUNT_IN_PAGE = 40;
 let page = 1;
@@ -95,6 +96,8 @@ document.addEventListener('scroll', event => {
     document.documentElement.clientHeight
   );
   var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+  debug.textContent = `scrollHeight=${scrollHeight}, scrollTop=${scrollTop}, clientHeight=${document.documentElement.clientHeight}`;
   if (scrollTop + document.documentElement.clientHeight + 1 >= scrollHeight) {
     if (max_pages > page) {
       page++;
