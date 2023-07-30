@@ -134,11 +134,17 @@ document.addEventListener('scroll', event => {
   //   }
   // }
 
-  debug.textContent = `scrollTop=${document.documentElement.scrollTop}, clientHeight=${document.documentElement.clientHeight}, scrollHeight=${document.documentElement.scrollHeight}`;
+  // debug.textContent = `scrollTop=${document.documentElement.scrollTop}, clientHeight=${document.documentElement.clientHeight}, scrollHeight=${document.documentElement.scrollHeight}`;
 
   // debug.textContent = `getBoundingClientRect().bottom=${Math.floor(
   //   document.documentElement.getBoundingClientRect().bottom
   // )}, clientHeight=${document.documentElement.clientHeight}`;
+
+  const height = document.body.offsetHeight;
+  const screenHeight = window.innerHeight;
+  const scrolled = window.scrollY;
+
+  debug.textContent = `height=${height}, screenHeight=${screenHeight}, scrolled=${scrolled}`;
 
   if (document.documentElement.clientHeight < document.documentElement.scrollTop) {
     scrollUp.hidden = false;
