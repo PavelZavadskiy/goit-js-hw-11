@@ -89,7 +89,6 @@ const removeChildren = container => {
 };
 
 const scrollingUpadating = () => {
-  console.log('scrollingUpadating');
   const windowHeight = window.innerHeight;
   const documentHeight = document.documentElement.scrollHeight;
   const scrollPosition = window.scrollY;
