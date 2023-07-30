@@ -134,8 +134,6 @@ document.addEventListener('scroll', event => {
   //   }
   // }
 
-  $('html, body').scrollTop() + $(window).height() == document.documentElement.scrollHeight;
-
   debug.textContent = `scrollTop=${document.documentElement.scrollTop}, clientHeight=${document.documentElement.clientHeight}, scrollHeight=${document.documentElement.scrollHeight}`;
 
   // debug.textContent = `getBoundingClientRect().bottom=${Math.floor(
