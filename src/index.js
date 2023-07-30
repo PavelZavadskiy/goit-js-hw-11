@@ -134,9 +134,13 @@ document.addEventListener('scroll', event => {
   //   }
   // }
 
-  debug.textContent = `getBoundingClientRect().bottom=${Math.floor(
-    document.documentElement.getBoundingClientRect().bottom
-  )}, clientHeight=${document.documentElement.clientHeight}`;
+  $('html, body').scrollTop() + $(window).height() == document.documentElement.scrollHeight;
+
+  debug.textContent = `scrollTop=${document.documentElement.scrollTop}, clientHeight=${document.documentElement.clientHeight}, scrollHeight=${document.documentElement.scrollHeight}`;
+
+  // debug.textContent = `getBoundingClientRect().bottom=${Math.floor(
+  //   document.documentElement.getBoundingClientRect().bottom
+  // )}, clientHeight=${document.documentElement.clientHeight}`;
 
   if (document.documentElement.clientHeight < document.documentElement.scrollTop) {
     scrollUp.hidden = false;
