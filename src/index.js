@@ -86,7 +86,10 @@ const removeChildren = container => {
 };
 
 document.addEventListener('scroll', event => {
-  if (document.documentElement.clientHeight === Math.floor(document.documentElement.getBoundingClientRect().bottom)) {
+  if (
+    Math.ceil(document.documentElement.scrollTop + document.documentElement.clientHeight) >=
+    Math.floor(document.documentElement.getBoundingClientRect().height)
+  ) {
     if (max_pages > page) {
       page++;
       getImages()
