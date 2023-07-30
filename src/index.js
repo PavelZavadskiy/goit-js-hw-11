@@ -86,10 +86,16 @@ const removeChildren = container => {
 };
 
 document.addEventListener('scroll', event => {
-  if (
-    Math.ceil(document.documentElement.scrollTop + document.documentElement.clientHeight) >=
-    Math.floor(document.documentElement.getBoundingClientRect().height)
-  ) {
+  var scrollHeight = Math.max(
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.offsetHeight,
+    document.body.clientHeight,
+    document.documentElement.clientHeight
+  );
+  var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  if (scrollTop + document.documentElement.clientHeight + 1 >= scrollHeight) {
     if (max_pages > page) {
       page++;
       getImages()
@@ -99,6 +105,20 @@ document.addEventListener('scroll', event => {
       Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
     }
   }
+
+  // if (
+  //   Math.ceil(document.documentElement.scrollTop + document.documentElement.clientHeight) >=
+  //   Math.floor(document.documentElement.getBoundingClientRect().height)
+  // ) {
+  //   if (max_pages > page) {
+  //     page++;
+  //     getImages()
+  //       .then(responce => render(responce.data))
+  //       .catch(error => Notiflix.Notify.failure(`Something went wrong: ${error.code} ${error.message}`));
+  //   } else {
+  //     Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+  //   }
+  // }
 
   if (document.documentElement.clientHeight < document.documentElement.scrollTop) {
     scrollUp.hidden = false;
