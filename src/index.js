@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Notiflix from 'notiflix';
+import throttle from 'lodash.throttle';
 
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
@@ -11,11 +12,11 @@ const form = document.querySelector('#search-form');
 const searchQuery = document.querySelector('[name="searchQuery"]');
 const scrollUp = document.querySelector('.scroll-up');
 scrollUp.hidden = true;
-const debug = document.querySelector('.debug');
 
 const COUNT_IN_PAGE = 40;
 let page = 1;
 let max_pages = page;
+let messEndSearchResult = false;
 
 const option = {
   captions: true,
@@ -31,6 +32,7 @@ form.addEventListener('submit', evt => {
   evt.preventDefault();
   removeChildren(gallery);
   page = 1;
+  messEndSearchResult = false;
   if (searchQuery.value.trim().length == 0) {
     Notiflix.Notify.failure('The search field must be filled.');
     return;
@@ -86,7 +88,38 @@ const removeChildren = container => {
   }
 };
 
+const scrollingUpadating = () => {
+  console.log('scrollingUpadating');
+  const windowHeight = window.innerHeight;
+  const documentHeight = document.documentElement.scrollHeight;
+  const scrollPosition = window.scrollY;
+  if (documentHeight - (windowHeight + scrollPosition) <= 100) {
+    if (max_pages > page) {
+      page++;
+      getImages()
+        .then(responce => render(responce.data))
+        .catch(error => Notiflix.Notify.failure(`Something went wrong: ${error.code} ${error.message}`));
+    } else {
+      if (!messEndSearchResult) {
+        messEndSearchResult = true;
+        Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+      }
+    }
+  }
+
+  if (document.documentElement.clientHeight < document.documentElement.scrollTop) {
+    scrollUp.hidden = false;
+  } else {
+    scrollUp.hidden = true;
+  }
+};
+
+const throttledScrrolling = throttle(() => {
+  scrollingUpadating();
+}, 500);
+
 document.addEventListener('scroll', event => {
+  throttledScrrolling();
   // var scrollHeight = Math.max(
   //   document.body.scrollHeight,
   //   document.documentElement.scrollHeight,
@@ -96,7 +129,6 @@ document.addEventListener('scroll', event => {
   //   document.documentElement.clientHeight
   // );
   // var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
   // debug.textContent = `scrollHeight=${scrollHeight}, scrollTop=${scrollTop}, clientHeight=${document.documentElement.clientHeight}`;
   // if (scrollTop + document.documentElement.clientHeight + 1 >= scrollHeight) {
   //   if (max_pages > page) {
@@ -108,7 +140,6 @@ document.addEventListener('scroll', event => {
   //     Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
   //   }
   // }
-
   // if (
   //   Math.ceil(document.documentElement.scrollTop + document.documentElement.clientHeight) >=
   //   Math.floor(document.documentElement.getBoundingClientRect().height)
@@ -122,7 +153,6 @@ document.addEventListener('scroll', event => {
   //     Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
   //   }
   // }
-
   // if (document.documentElement.clientHeight === Math.floor(document.documentElement.getBoundingClientRect().bottom)) {
   //   if (max_pages > page) {
   //     page++;
@@ -133,17 +163,13 @@ document.addEventListener('scroll', event => {
   //     Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
   //   }
   // }
-
   // debug.textContent = `scrollTop=${document.documentElement.scrollTop}, clientHeight=${document.documentElement.clientHeight}, scrollHeight=${document.documentElement.scrollHeight}`;
-
   // debug.textContent = `getBoundingClientRect().bottom=${Math.floor(
   //   document.documentElement.getBoundingClientRect().bottom
   // )}, clientHeight=${document.documentElement.clientHeight}`;
-
   // const height = document.body.offsetHeight;
   // const screenHeight = window.innerHeight;
   // const scrolled = window.scrollY;
-
   // if (height - screenHeight - scrolled < 100) {
   //   if (max_pages > page) {
   //     page++;
@@ -154,9 +180,7 @@ document.addEventListener('scroll', event => {
   //     Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
   //   }
   // }
-
   // debug.textContent = `height=${height}, screenHeight=${screenHeight}, scrolled=${scrolled}, scrollTop=${document.documentElement.scrollTop}`;
-
   // if (document.documentElement.clientHeight === Math.floor(document.documentElement.getBoundingClientRect().bottom)) {
   //   if (max_pages > page) {
   //     page++;
@@ -167,19 +191,19 @@ document.addEventListener('scroll', event => {
   //     Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
   //   }
   // }
-
-  const windowHeight = window.innerHeight;
-  const documentHeight = document.documentElement.scrollHeight;
-  const scrollPosition = window.scrollY;
-  if (documentHeight - (windowHeight + scrollPosition) <= 100) {
-    renderContent();
-  }
-
-  if (document.documentElement.clientHeight < document.documentElement.scrollTop) {
-    scrollUp.hidden = false;
-  } else {
-    scrollUp.hidden = true;
-  }
+  // const windowHeight = window.innerHeight;
+  // const documentHeight = document.documentElement.scrollHeight;
+  // const scrollPosition = window.scrollY;
+  // if (documentHeight - (windowHeight + scrollPosition) <= 100) {
+  //   if (max_pages > page) {
+  //     page++;
+  //     getImages()
+  //       .then(responce => render(responce.data))
+  //       .catch(error => Notiflix.Notify.failure(`Something went wrong: ${error.code} ${error.message}`));
+  //   } else {
+  //     Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+  //   }
+  // }
 });
 
 scrollUp.addEventListener('click', () => {
